@@ -16,6 +16,7 @@ spec:
       labels:
         app: nncs
     spec:
+      hostNetwork: true
       {{- with .Values.global.imagePullSecrets }}
       imagePullSecrets:
         {{- toYaml . | nindent 8 }}
@@ -26,9 +27,9 @@ spec:
           imagePullPolicy: {{ .Values.nncs.image.pullPolicy }}
           env:
             - name: PN_NNCS1_IP_ADDRESS
-              value: {{ .Values.nncs.env.nncs1IpAddress | default .Values.global.primaryServerIp | quote }}
+              value: {{ .Values.nncs.service.ip1 | default .Values.global.primaryServerIp | quote }}
             - name: PN_NNCS2_IP_ADDRESS
-              value: {{ .Values.nncs.env.nncs2IpAddress | default .Values.global.secondaryServerIp | quote }}
+              value: {{ .Values.nncs.service.ip2 | default .Values.global.secondaryServerIp | quote }}
             {{- if .Values.nncs.env.localIpAddress }}
             - name: PN_NNCS_LOCAL_IP_ADDRESS
               value: {{ .Values.nncs.env.localIpAddress | quote }}
