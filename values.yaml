@@ -20,8 +20,8 @@ global:
   # Gateway API configuration for HTTPRoutes
   gateway:
     parentRefs:
-      - name: taskcenter
-        sectionName: http
+      - name: taskndo
+        namespace: taskcenter
 
 # ------------------------------------------------------------------------------
 # Dependencies
