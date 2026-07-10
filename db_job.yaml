@@ -1,0 +1,80 @@
+apiVersion: batch/v1
+kind: Job
+metadata:
+  name: mongo-setup
+  namespace: 3ds
+spec:
+  template:
+    spec:
+      restartPolicy: OnFailure
+      containers:
+        - name: mongo-init
+          image: mongo:8.0
+          command:
+            - /bin/sh
+            - -c
+            - |
+              echo "Waiting for MongoDB service to start..."
+              until mongosh --host mongo --port 27017 --eval "db.adminCommand('ping')" --quiet; do
+                sleep 2
+              done
+              
+              echo "Initializing replica set..."
+              mongosh --host mongo --port 27017 --eval "
+                try {
+                  rs.status();
+                  print('Replica set already initialized');
+                } catch (err) {
+                  print('Initiating replica set...');
+                  rs.initiate({
+                    _id: 'rs0',
+                    members: [{ _id: 0, host: 'mongo:27017' }]
+                  });
+                }
+              " --quiet
+
+              echo "Waiting for replica set primary to be elected..."
+              until mongosh --host mongo --port 27017 --eval "db.hello().isWritablePrimary" --quiet | grep -q "true"; do
+                sleep 1
+              done
+
+              echo "Seeding databases..."
+              mongosh --host mongo --port 27017 --eval "
+                var accountDb = db.getSiblingDB('account');
+                if (accountDb.servers.countDocuments({ service_name: 'miiverse' }) === 0) {
+                  print('Seeding account servers info...');
+                  accountDb.servers.insertOne({
+                    ip: 'miiverse-api',
+                    port: 80,
+                    service_name: 'miiverse',
+                    service_type: 'service',
+                    game_server_id: '',
+                    title_ids: [],
+                    access_mode: 'prod',
+                    maintenance_mode: false,
+                    device: 1,
+                    aes_key: '1234567812345678123456781234567812345678123456781234567812345678',
+                    client_id: '87cd32617f1985439ea608c2746e4610'
+                  });
+                } else {
+                  print('Account servers info already seeded');
+                }
+
+                var miiverseDb = db.getSiblingDB('miiverse');
+                if (miiverseDb.endpoints.countDocuments({ api_host: 'api.olv.n.tasklab.dev' }) === 0) {
+                  print('Seeding miiverse endpoints info...');
+                  miiverseDb.endpoints.insertOne({
+                    status: 0,
+                    server_access_level: 'prod',
+                    topics: true,
+                    guest_access: true,
+                    host: 'api.olv.n.tasklab.dev',
+                    api_host: 'api.olv.n.tasklab.dev',
+                    portal_host: 'portal.olv.n.tasklab.dev',
+                    n3ds_host: 'ctr.olv.n.tasklab.dev'
+                  });
+                } else {
+                  print('Miiverse endpoints info already seeded');
+                }
+              " --quiet
+              echo "Database seeding finished successfully."
