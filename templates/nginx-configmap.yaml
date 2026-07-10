@@ -2,7 +2,7 @@
 apiVersion: v1
 kind: ConfigMap
 metadata:
-  name: {{ include "taskndo.fullname" . }}-nginx-config
+  name: nginx-config
   labels:
     {{- include "taskndo.labels" . | nindent 4 }}
 data:
@@ -47,7 +47,7 @@ data:
         ssl_certificate /etc/nginx/certs/tls.crt;
         ssl_certificate_key /etc/nginx/certs/tls.key;
         location / {
-            proxy_pass http://{{ include "taskndo.fullname" . }}-account:{{ .Values.account.service.httpPort }};
+            proxy_pass http://account:{{ .Values.account.service.httpPort }};
             proxy_set_header Host $host;
             proxy_set_header X-Real-IP $remote_addr;
             proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
@@ -63,7 +63,7 @@ data:
         ssl_certificate /etc/nginx/certs/tls.crt;
         ssl_certificate_key /etc/nginx/certs/tls.key;
         location / {
-            proxy_pass http://{{ include "taskndo.fullname" . }}-miiverse-api:{{ .Values.miiverseApi.service.httpPort }};
+            proxy_pass http://miiverse-api:{{ .Values.miiverseApi.service.httpPort }};
             proxy_set_header Host $host;
             proxy_set_header X-Real-IP $remote_addr;
             proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
@@ -79,7 +79,7 @@ data:
         ssl_certificate /etc/nginx/certs/tls.crt;
         ssl_certificate_key /etc/nginx/certs/tls.key;
         location / {
-            proxy_pass http://{{ include "taskndo.fullname" . }}-miiverse-web:{{ .Values.miiverseWeb.service.httpPort }};
+            proxy_pass http://miiverse-web:{{ .Values.miiverseWeb.service.httpPort }};
             proxy_set_header Host $host;
             proxy_set_header X-Real-IP $remote_addr;
             proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;

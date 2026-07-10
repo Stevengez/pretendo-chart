@@ -2,19 +2,19 @@
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: {{ include "taskndo.fullname" . }}-nncs
+  name: nncs
   labels:
     {{- include "taskndo.labels" . | nindent 4 }}
-    app: {{ include "taskndo.fullname" . }}-nncs
+    app: nncs
 spec:
   replicas: {{ .Values.nncs.replicaCount }}
   selector:
     matchLabels:
-      app: {{ include "taskndo.fullname" . }}-nncs
+      app: nncs
   template:
     metadata:
       labels:
-        app: {{ include "taskndo.fullname" . }}-nncs
+        app: nncs
     spec:
       {{- with .Values.global.imagePullSecrets }}
       imagePullSecrets:

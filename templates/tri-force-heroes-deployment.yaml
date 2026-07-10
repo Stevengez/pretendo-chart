@@ -2,19 +2,19 @@
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: {{ include "taskndo.fullname" . }}-tri-force-heroes
+  name: tri-force-heroes
   labels:
     {{- include "taskndo.labels" . | nindent 4 }}
-    app: {{ include "taskndo.fullname" . }}-tri-force-heroes
+    app: tri-force-heroes
 spec:
   replicas: {{ .Values.triForceHeroes.replicaCount }}
   selector:
     matchLabels:
-      app: {{ include "taskndo.fullname" . }}-tri-force-heroes
+      app: tri-force-heroes
   template:
     metadata:
       labels:
-        app: {{ include "taskndo.fullname" . }}-tri-force-heroes
+        app: tri-force-heroes
     spec:
       {{- with .Values.global.imagePullSecrets }}
       imagePullSecrets:
@@ -34,13 +34,13 @@ spec:
             - name: PN_TFH_SECURE_SERVER_PORT
               value: {{ .Values.triForceHeroes.service.securePort | quote }}
             - name: PN_TFH_ACCOUNT_GRPC_HOST
-              value: {{ include "taskndo.fullname" . }}-account
+              value: account
             - name: PN_TFH_ACCOUNT_GRPC_PORT
               value: {{ .Values.account.service.grpcPort | quote }}
             - name: PN_TFH_ACCOUNT_GRPC_API_KEY
               value: {{ .Values.global.masterApiKey | quote }}
             - name: PN_TFH_FRIENDS_GRPC_HOST
-              value: {{ include "taskndo.fullname" . }}-friends
+              value: friends
             - name: PN_TFH_FRIENDS_GRPC_PORT
               value: {{ .Values.friends.service.grpcPort | quote }}
             - name: PN_TFH_FRIENDS_GRPC_API_KEY

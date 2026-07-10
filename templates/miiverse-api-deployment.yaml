@@ -2,19 +2,19 @@
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: {{ include "taskndo.fullname" . }}-miiverse-api
+  name: miiverse-api
   labels:
     {{- include "taskndo.labels" . | nindent 4 }}
-    app: {{ include "taskndo.fullname" . }}-miiverse-api
+    app: miiverse-api
 spec:
   replicas: {{ .Values.miiverseApi.replicaCount }}
   selector:
     matchLabels:
-      app: {{ include "taskndo.fullname" . }}-miiverse-api
+      app: miiverse-api
   template:
     metadata:
       labels:
-        app: {{ include "taskndo.fullname" . }}-miiverse-api
+        app: miiverse-api
     spec:
       {{- with .Values.global.imagePullSecrets }}
       imagePullSecrets:
@@ -40,13 +40,13 @@ spec:
             - name: PN_MIIVERSE_API_S3_REGION
               value: {{ .Values.miiverseApi.env.s3Region | quote }}
             - name: PN_MIIVERSE_API_GRPC_FRIENDS_HOST
-              value: {{ include "taskndo.fullname" . }}-friends
+              value: friends
             - name: PN_MIIVERSE_API_GRPC_FRIENDS_PORT
               value: {{ .Values.friends.service.grpcPort | quote }}
             - name: PN_MIIVERSE_API_GRPC_FRIENDS_API_KEY
               value: {{ .Values.global.masterApiKey | quote }}
             - name: PN_MIIVERSE_API_GRPC_ACCOUNT_HOST
-              value: {{ include "taskndo.fullname" . }}-account
+              value: account
             - name: PN_MIIVERSE_API_GRPC_ACCOUNT_PORT
               value: {{ .Values.account.service.grpcPort | quote }}
             - name: PN_MIIVERSE_API_GRPC_ACCOUNT_API_KEY

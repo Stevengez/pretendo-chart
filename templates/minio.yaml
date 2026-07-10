@@ -58,7 +58,7 @@ spec:
 apiVersion: batch/v1
 kind: Job
 metadata:
-  name: {{ include "taskndo.fullname" . }}-minio-setup
+  name: minio-setup
   labels:
     {{- include "taskndo.labels" . | nindent 4 }}
 spec:

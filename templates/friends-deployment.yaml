@@ -2,19 +2,19 @@
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: {{ include "taskndo.fullname" . }}-friends
+  name: friends
   labels:
     {{- include "taskndo.labels" . | nindent 4 }}
-    app: {{ include "taskndo.fullname" . }}-friends
+    app: friends
 spec:
   replicas: {{ .Values.friends.replicaCount }}
   selector:
     matchLabels:
-      app: {{ include "taskndo.fullname" . }}-friends
+      app: friends
   template:
     metadata:
       labels:
-        app: {{ include "taskndo.fullname" . }}-friends
+        app: friends
     spec:
       {{- with .Values.global.imagePullSecrets }}
       imagePullSecrets:
@@ -44,7 +44,7 @@ spec:
             - name: PN_FRIENDS_CONFIG_GRPC_SERVER_PORT
               value: {{ .Values.friends.service.grpcPort | quote }}
             - name: PN_FRIENDS_CONFIG_ACCOUNT_GRPC_HOST
-              value: {{ include "taskndo.fullname" . }}-account
+              value: account
             - name: PN_FRIENDS_CONFIG_ACCOUNT_GRPC_PORT
               value: {{ .Values.account.service.grpcPort | quote }}
             - name: PN_FRIENDS_CONFIG_ACCOUNT_GRPC_API_KEY

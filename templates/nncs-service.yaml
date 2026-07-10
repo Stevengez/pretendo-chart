@@ -2,7 +2,7 @@
 apiVersion: v1
 kind: Service
 metadata:
-  name: {{ include "taskndo.fullname" . }}-nncs
+  name: nncs
   labels:
     {{- include "taskndo.labels" . | nindent 4 }}
 spec:
@@ -25,5 +25,5 @@ spec:
       protocol: UDP
       name: unknown-33335
   selector:
-    app: {{ include "taskndo.fullname" . }}-nncs
+    app: nncs
 {{- end }}

@@ -2,19 +2,19 @@
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: {{ include "taskndo.fullname" . }}-miiverse-web
+  name: miiverse-web
   labels:
     {{- include "taskndo.labels" . | nindent 4 }}
-    app: {{ include "taskndo.fullname" . }}-miiverse-web
+    app: miiverse-web
 spec:
   replicas: {{ .Values.miiverseWeb.replicaCount }}
   selector:
     matchLabels:
-      app: {{ include "taskndo.fullname" . }}-miiverse-web
+      app: miiverse-web
   template:
     metadata:
       labels:
-        app: {{ include "taskndo.fullname" . }}-miiverse-web
+        app: miiverse-web
     spec:
       {{- with .Values.global.imagePullSecrets }}
       imagePullSecrets:
@@ -32,13 +32,13 @@ spec:
             - name: PN_JUXTAPOSITION_UI_REDIS_PORT
               value: {{ if .Values.redis.enabled }}{{ .Values.redis.service.port | quote }}{{ else }}{{ .Values.miiverseWeb.env.redisPort | quote }}{{ end }}
             - name: PN_JUXTAPOSITION_UI_GRPC_ACCOUNT_HOST
-              value: {{ include "taskndo.fullname" . }}-account
+              value: account
             - name: PN_JUXTAPOSITION_UI_GRPC_ACCOUNT_PORT
               value: {{ .Values.account.service.grpcPort | quote }}
             - name: PN_JUXTAPOSITION_UI_GRPC_ACCOUNT_API_KEY
               value: {{ .Values.global.masterApiKey | quote }}
             - name: PN_JUXTAPOSITION_UI_GRPC_MIIVERSE_HOST
-              value: {{ include "taskndo.fullname" . }}-miiverse-api
+              value: miiverse-api
             - name: PN_JUXTAPOSITION_UI_GRPC_MIIVERSE_PORT
               value: {{ .Values.miiverseApi.service.grpcPort | quote }}
             - name: PN_JUXTAPOSITION_UI_GRPC_MIIVERSE_API_KEY

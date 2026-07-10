@@ -2,7 +2,7 @@
 apiVersion: v1
 kind: Service
 metadata:
-  name: {{ include "taskndo.fullname" . }}-miiverse-web
+  name: miiverse-web
   labels:
     {{- include "taskndo.labels" . | nindent 4 }}
 spec:
@@ -12,5 +12,5 @@ spec:
       protocol: TCP
       name: http
   selector:
-    app: {{ include "taskndo.fullname" . }}-miiverse-web
+    app: miiverse-web
 {{- end }}

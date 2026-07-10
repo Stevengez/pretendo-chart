@@ -2,19 +2,19 @@
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: {{ include "taskndo.fullname" . }}-account
+  name: account
   labels:
     {{- include "taskndo.labels" . | nindent 4 }}
-    app: {{ include "taskndo.fullname" . }}-account
+    app: account
 spec:
   replicas: {{ .Values.account.replicaCount }}
   selector:
     matchLabels:
-      app: {{ include "taskndo.fullname" . }}-account
+      app: account
   template:
     metadata:
       labels:
-        app: {{ include "taskndo.fullname" . }}-account
+        app: account
     spec:
       {{- with .Values.global.imagePullSecrets }}
       imagePullSecrets:
@@ -58,7 +58,7 @@ spec:
             - name: PN_ACT_CONFIG_GRPC_MASTER_API_KEY_API
               value: {{ .Values.global.masterApiKey | quote }}
             - name: PN_ACT_CONFIG_GRPC_MIIVERSE_HOST
-              value: {{ include "taskndo.fullname" . }}-miiverse-api
+              value: miiverse-api
             - name: PN_ACT_CONFIG_GRPC_MIIVERSE_PORT
               value: {{ .Values.miiverseApi.service.grpcPort | quote }}
             - name: PN_ACT_CONFIG_GRPC_MIIVERSE_KEY_API

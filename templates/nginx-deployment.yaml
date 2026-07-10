@@ -2,19 +2,19 @@
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: {{ include "taskndo.fullname" . }}-nginx
+  name: nginx
   labels:
     {{- include "taskndo.labels" . | nindent 4 }}
-    app: {{ include "taskndo.fullname" . }}-nginx
+    app: nginx
 spec:
   replicas: {{ .Values.nginx.replicaCount }}
   selector:
     matchLabels:
-      app: {{ include "taskndo.fullname" . }}-nginx
+      app: nginx
   template:
     metadata:
       labels:
-        app: {{ include "taskndo.fullname" . }}-nginx
+        app: nginx
     spec:
       {{- with .Values.global.imagePullSecrets }}
       imagePullSecrets:
@@ -44,7 +44,7 @@ spec:
       volumes:
         - name: config
           configMap:
-            name: {{ include "taskndo.fullname" . }}-nginx-config
+            name: nginx-config
         - name: certs
           secret:
             secretName: {{ .Values.nginx.tls.secretName | quote }}
