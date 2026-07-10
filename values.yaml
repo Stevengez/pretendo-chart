@@ -221,6 +221,8 @@ nncs:
     pullPolicy: IfNotPresent
   service:
     type: NodePort
+    ip1: "10.0.0.169"
+    ip2: "10.0.0.69"
   env:
     localIpAddress: ""
 
