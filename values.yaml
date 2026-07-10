@@ -16,7 +16,7 @@ global:
   secondaryServerIp: "163.192.159.130"
   # Optional global image pull secrets for private registries
   imagePullSecrets:
-    - tskregcred
+    - name: tskregcred
   # Gateway API configuration for HTTPRoutes
   gateway:
     parentRefs:
