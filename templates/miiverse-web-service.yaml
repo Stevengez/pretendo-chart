@@ -1,0 +1,16 @@
+{{- if .Values.miiverseWeb.enabled -}}
+apiVersion: v1
+kind: Service
+metadata:
+  name: {{ include "taskndo.fullname" . }}-miiverse-web
+  labels:
+    {{- include "taskndo.labels" . | nindent 4 }}
+spec:
+  ports:
+    - port: {{ .Values.miiverseWeb.service.httpPort }}
+      targetPort: http
+      protocol: TCP
+      name: http
+  selector:
+    app: {{ include "taskndo.fullname" . }}-miiverse-web
+{{- end }}

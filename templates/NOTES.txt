@@ -1,0 +1,16 @@
+Taskndo services have been successfully deployed.
+
+The following services are configured:
+- Account Service: {{ include "taskndo.fullname" . }}-account (Port: {{ .Values.account.service.httpPort }})
+- Friends Service: {{ include "taskndo.fullname" . }}-friends (Ports: auth: {{ .Values.friends.service.authPort }}, secure: {{ .Values.friends.service.securePort }})
+- Miiverse API: {{ include "taskndo.fullname" . }}-miiverse-api (Port: {{ .Values.miiverseApi.service.httpPort }})
+- Miiverse Web: {{ include "taskndo.fullname" . }}-miiverse-web (Port: {{ .Values.miiverseWeb.service.httpPort }})
+- Tri-Force Heroes: {{ include "taskndo.fullname" . }}-tri-force-heroes (Ports: auth: {{ .Values.triForceHeroes.service.authPort }})
+- NNCS NAT Check: {{ include "taskndo.fullname" . }}-nncs
+- Nginx Router: {{ include "taskndo.fullname" . }}-nginx (HTTP: {{ .Values.nginx.service.httpPort }}, HTTPS: {{ .Values.nginx.service.httpsPort }})
+
+HTTP and HTTPS routing is managed through the central Nginx Router service mapping the configured hosts:
+- Account domains: {{ join ", " .Values.account.hostnames }}
+- Miiverse API domains: {{ join ", " .Values.miiverseApi.hostnames }}
+- Miiverse Web domains: {{ join ", " .Values.miiverseWeb.hostnames }}
+- S3/CDN domains: cdn.n.tasklab.dev, r2-cdn.n.tasklab.dev

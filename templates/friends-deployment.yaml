@@ -1,0 +1,72 @@
+{{- if .Values.friends.enabled -}}
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: {{ include "taskndo.fullname" . }}-friends
+  labels:
+    {{- include "taskndo.labels" . | nindent 4 }}
+    app: {{ include "taskndo.fullname" . }}-friends
+spec:
+  replicas: {{ .Values.friends.replicaCount }}
+  selector:
+    matchLabels:
+      app: {{ include "taskndo.fullname" . }}-friends
+  template:
+    metadata:
+      labels:
+        app: {{ include "taskndo.fullname" . }}-friends
+    spec:
+      {{- with .Values.global.imagePullSecrets }}
+      imagePullSecrets:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+      containers:
+        - name: friends
+          image: "{{ if .Values.global.imageRegistry }}{{ .Values.global.imageRegistry }}/{{ end }}{{ .Values.friends.image.repository }}:{{ .Values.friends.image.tag }}"
+          imagePullPolicy: {{ .Values.friends.image.pullPolicy }}
+          env:
+            - name: PN_ACT_CONFIG_SERVER_ENVIRONMENT
+              value: {{ .Values.global.serverEnvironment | quote }}
+            - name: PN_FRIENDS_CONFIG_POSTGRES_URI
+              value: {{ .Values.friends.env.postgresUri | quote }}
+            - name: PN_FRIENDS_CONFIG_AES_KEY
+              value: {{ .Values.global.aesKey | quote }}
+            - name: PN_FRIENDS_CONFIG_GRPC_API_KEY
+              value: {{ .Values.global.masterApiKey | quote }}
+            - name: PN_FRIENDS_CONFIG_POSTGRES_MAX_CONNECTIONS
+              value: {{ .Values.friends.env.postgresMaxConnections | quote }}
+            - name: PN_FRIENDS_CONFIG_AUTHENTICATION_SERVER_PORT
+              value: {{ .Values.friends.service.authPort | quote }}
+            - name: PN_FRIENDS_CONFIG_SECURE_SERVER_PORT
+              value: {{ .Values.friends.service.securePort | quote }}
+            - name: PN_FRIENDS_CONFIG_SECURE_SERVER_HOST
+              value: {{ .Values.friends.env.secureServerHost | default .Values.global.primaryServerIp | quote }}
+            - name: PN_FRIENDS_CONFIG_GRPC_SERVER_PORT
+              value: {{ .Values.friends.service.grpcPort | quote }}
+            - name: PN_FRIENDS_CONFIG_ACCOUNT_GRPC_HOST
+              value: {{ include "taskndo.fullname" . }}-account
+            - name: PN_FRIENDS_CONFIG_ACCOUNT_GRPC_PORT
+              value: {{ .Values.account.service.grpcPort | quote }}
+            - name: PN_FRIENDS_CONFIG_ACCOUNT_GRPC_API_KEY
+              value: {{ .Values.global.masterApiKey | quote }}
+            - name: PN_FRIENDS_CONFIG_MII_DECRYPT_KEY
+              value: ""
+            - name: PN_FRIENDS_CONFIG_PID_HMAC_KEY
+              value: ""
+          ports:
+            - name: auth-tcp
+              containerPort: {{ .Values.friends.service.authPort }}
+              protocol: TCP
+            - name: auth-udp
+              containerPort: {{ .Values.friends.service.authPort }}
+              protocol: UDP
+            - name: secure-tcp
+              containerPort: {{ .Values.friends.service.securePort }}
+              protocol: TCP
+            - name: secure-udp
+              containerPort: {{ .Values.friends.service.securePort }}
+              protocol: UDP
+            - name: grpc
+              containerPort: {{ .Values.friends.service.grpcPort }}
+              protocol: TCP
+{{- end }}

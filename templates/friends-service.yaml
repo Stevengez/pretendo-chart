@@ -1,0 +1,33 @@
+{{- if .Values.friends.enabled -}}
+apiVersion: v1
+kind: Service
+metadata:
+  name: {{ include "taskndo.fullname" . }}-friends
+  labels:
+    {{- include "taskndo.labels" . | nindent 4 }}
+spec:
+  type: {{ .Values.friends.service.type | default "NodePort" }}
+  ports:
+    - port: {{ .Values.friends.service.authPort }}
+      targetPort: auth-tcp
+      protocol: TCP
+      name: auth-tcp
+    - port: {{ .Values.friends.service.authPort }}
+      targetPort: auth-udp
+      protocol: UDP
+      name: auth-udp
+    - port: {{ .Values.friends.service.securePort }}
+      targetPort: secure-tcp
+      protocol: TCP
+      name: secure-tcp
+    - port: {{ .Values.friends.service.securePort }}
+      targetPort: secure-udp
+      protocol: UDP
+      name: secure-udp
+    - port: {{ .Values.friends.service.grpcPort }}
+      targetPort: grpc
+      protocol: TCP
+      name: grpc
+  selector:
+    app: {{ include "taskndo.fullname" . }}-friends
+{{- end }}

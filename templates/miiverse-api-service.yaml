@@ -1,0 +1,20 @@
+{{- if .Values.miiverseApi.enabled -}}
+apiVersion: v1
+kind: Service
+metadata:
+  name: {{ include "taskndo.fullname" . }}-miiverse-api
+  labels:
+    {{- include "taskndo.labels" . | nindent 4 }}
+spec:
+  ports:
+    - port: {{ .Values.miiverseApi.service.httpPort }}
+      targetPort: http
+      protocol: TCP
+      name: http
+    - port: {{ .Values.miiverseApi.service.grpcPort }}
+      targetPort: grpc
+      protocol: TCP
+      name: grpc
+  selector:
+    app: {{ include "taskndo.fullname" . }}-miiverse-api
+{{- end }}

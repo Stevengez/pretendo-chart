@@ -1,0 +1,73 @@
+{{- if .Values.miiverseApi.enabled -}}
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: {{ include "taskndo.fullname" . }}-miiverse-api
+  labels:
+    {{- include "taskndo.labels" . | nindent 4 }}
+    app: {{ include "taskndo.fullname" . }}-miiverse-api
+spec:
+  replicas: {{ .Values.miiverseApi.replicaCount }}
+  selector:
+    matchLabels:
+      app: {{ include "taskndo.fullname" . }}-miiverse-api
+  template:
+    metadata:
+      labels:
+        app: {{ include "taskndo.fullname" . }}-miiverse-api
+    spec:
+      {{- with .Values.global.imagePullSecrets }}
+      imagePullSecrets:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+      containers:
+        - name: miiverse-api
+          image: "{{ if .Values.global.imageRegistry }}{{ .Values.global.imageRegistry }}/{{ end }}{{ .Values.miiverseApi.image.repository }}:{{ .Values.miiverseApi.image.tag }}"
+          imagePullPolicy: {{ .Values.miiverseApi.image.pullPolicy }}
+          env:
+            - name: PN_MIIVERSE_API_HTTP_PORT
+              value: {{ .Values.miiverseApi.service.httpPort | quote }}
+            - name: PN_MIIVERSE_API_MONGOOSE_URI
+              value: {{ if .Values.mongo.enabled }}"mongodb://mongo:{{ .Values.mongo.service.port }}/miiverse?directConnection=true"{{ else }}{{ .Values.miiverseApi.env.mongooseUri | quote }}{{ end }}
+            - name: PN_MIIVERSE_API_S3_ENDPOINT
+              value: {{ if .Values.minio.enabled }}"http://minio:{{ .Values.minio.service.port }}"{{ else }}{{ .Values.miiverseApi.env.s3Endpoint | quote }}{{ end }}
+            - name: PN_MIIVERSE_API_S3_KEY
+              value: {{ if .Values.minio.enabled }}{{ .Values.minio.env.rootUser | quote }}{{ else }}{{ .Values.miiverseApi.env.s3Key | quote }}{{ end }}
+            - name: PN_MIIVERSE_API_S3_SECRET
+              value: {{ if .Values.minio.enabled }}{{ .Values.minio.env.rootPassword | quote }}{{ else }}{{ .Values.miiverseApi.env.s3Secret | quote }}{{ end }}
+            - name: PN_MIIVERSE_API_S3_BUCKET
+              value: {{ if .Values.minio.enabled }}{{ .Values.minio.env.bucket | quote }}{{ else }}{{ .Values.miiverseApi.env.s3Bucket | quote }}{{ end }}
+            - name: PN_MIIVERSE_API_S3_REGION
+              value: {{ .Values.miiverseApi.env.s3Region | quote }}
+            - name: PN_MIIVERSE_API_GRPC_FRIENDS_HOST
+              value: {{ include "taskndo.fullname" . }}-friends
+            - name: PN_MIIVERSE_API_GRPC_FRIENDS_PORT
+              value: {{ .Values.friends.service.grpcPort | quote }}
+            - name: PN_MIIVERSE_API_GRPC_FRIENDS_API_KEY
+              value: {{ .Values.global.masterApiKey | quote }}
+            - name: PN_MIIVERSE_API_GRPC_ACCOUNT_HOST
+              value: {{ include "taskndo.fullname" . }}-account
+            - name: PN_MIIVERSE_API_GRPC_ACCOUNT_PORT
+              value: {{ .Values.account.service.grpcPort | quote }}
+            - name: PN_MIIVERSE_API_GRPC_ACCOUNT_API_KEY
+              value: {{ .Values.global.masterApiKey | quote }}
+            - name: PN_MIIVERSE_API_AES_KEY
+              value: {{ .Values.global.aesKey | quote }}
+            - name: PN_MIIVERSE_API_CDN_URL
+              value: {{ if .Values.minio.enabled }}"http://minio:{{ .Values.minio.service.port }}/{{ .Values.minio.env.bucket }}"{{ else }}{{ .Values.miiverseApi.env.cdnUrl | quote }}{{ end }}
+            - name: PN_MIIVERSE_API_GRPC_SERVER_API_KEY
+              value: {{ .Values.global.masterApiKey | quote }}
+            - name: PN_MIIVERSE_API_GRPC_SERVER_PORT
+              value: {{ .Values.miiverseApi.service.grpcPort | quote }}
+            - name: PN_MIIVERSE_API_DOMAINS_API
+              value: {{ .Values.miiverseApi.env.domainsApi | quote }}
+            - name: PN_MIIVERSE_API_DOMAINS_DISCOVERY
+              value: {{ .Values.miiverseApi.env.domainsDiscovery | quote }}
+          ports:
+            - name: http
+              containerPort: {{ .Values.miiverseApi.service.httpPort }}
+              protocol: TCP
+            - name: grpc
+              containerPort: {{ .Values.miiverseApi.service.grpcPort }}
+              protocol: TCP
+{{- end }}

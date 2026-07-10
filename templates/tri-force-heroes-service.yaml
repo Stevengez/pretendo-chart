@@ -1,0 +1,29 @@
+{{- if .Values.triForceHeroes.enabled -}}
+apiVersion: v1
+kind: Service
+metadata:
+  name: {{ include "taskndo.fullname" . }}-tri-force-heroes
+  labels:
+    {{- include "taskndo.labels" . | nindent 4 }}
+spec:
+  type: {{ .Values.triForceHeroes.service.type | default "NodePort" }}
+  ports:
+    - port: {{ .Values.triForceHeroes.service.authPort }}
+      targetPort: auth-tcp
+      protocol: TCP
+      name: auth-tcp
+    - port: {{ .Values.triForceHeroes.service.authPort }}
+      targetPort: auth-udp
+      protocol: UDP
+      name: auth-udp
+    - port: {{ .Values.triForceHeroes.service.securePort }}
+      targetPort: secure-tcp
+      protocol: TCP
+      name: secure-tcp
+    - port: {{ .Values.triForceHeroes.service.securePort }}
+      targetPort: secure-udp
+      protocol: UDP
+      name: secure-udp
+  selector:
+    app: {{ include "taskndo.fullname" . }}-tri-force-heroes
+{{- end }}

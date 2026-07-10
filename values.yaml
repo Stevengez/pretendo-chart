@@ -1,0 +1,232 @@
+# Default values for taskndo.
+# This is a YAML-formatted file.
+
+global:
+  # Shared AES key used across all services requiring encryption/decryption
+  aesKey: "1234567812345678123456781234567812345678123456781234567812345678"
+  # Shared Master API key for gRPC communication authentication
+  masterApiKey: "12345678123456781234567812345678"
+  # Image registry to prepend to image repository paths
+  imageRegistry: "registry.tasklab.dev"
+  # Global server environment (prod, dev, etc.)
+  serverEnvironment: "prod"
+  # Global primary server IP (used for game servers bind/advertisement)
+  primaryServerIp: "192.168.31.11"
+  # Global secondary server IP (used for secondary NAT checkers)
+  secondaryServerIp: "192.168.31.12"
+  # Optional global image pull secrets for private registries
+  imagePullSecrets: []
+  # Gateway API configuration for HTTPRoutes
+  gateway:
+    parentRefs:
+      - name: gateway
+        sectionName: http
+
+# ------------------------------------------------------------------------------
+# Dependencies
+# ------------------------------------------------------------------------------
+
+# MongoDB Deployment Configuration
+mongo:
+  enabled: true
+  image:
+    repository: mongo
+    tag: "8.0"
+    pullPolicy: IfNotPresent
+  service:
+    port: 27017
+
+# Redis Deployment Configuration
+redis:
+  enabled: true
+  image:
+    repository: redis
+    tag: "8.2-alpine"
+    pullPolicy: IfNotPresent
+  service:
+    port: 6379
+
+# PostgreSQL Deployment Configuration
+postgres:
+  enabled: true
+  image:
+    repository: postgres
+    tag: "latest"
+    pullPolicy: IfNotPresent
+  service:
+    port: 5432
+  env:
+    postgresUser: "postgres"
+    postgresPassword: "postgres"
+    postgresDb: "friends"
+
+# MinIO Deployment Configuration
+minio:
+  enabled: true
+  image:
+    repository: minio/minio
+    tag: "latest"
+    pullPolicy: IfNotPresent
+  service:
+    port: 9000
+    consolePort: 9001
+  env:
+    rootUser: "minioadmin"
+    rootPassword: "minioadmin"
+    domain: "minio"
+    bucket: "miiverse"
+
+# Nginx Router Configuration (Handles SSL for older consoles with TLS v1/v1.1)
+nginx:
+  enabled: true
+  replicaCount: 1
+  image:
+    repository: nginx
+    tag: "alpine"
+    pullPolicy: IfNotPresent
+  service:
+    type: LoadBalancer
+    httpPort: 80
+    httpsPort: 443
+  tls:
+    # Name of the Kubernetes Secret containing the TLS certificate (tls.crt) and key (tls.key)
+    secretName: "taskndo-nginx-tls"
+
+# ------------------------------------------------------------------------------
+# Application Services
+# ------------------------------------------------------------------------------
+
+# Account Service Configuration
+account:
+  enabled: true
+  replicaCount: 1
+  image:
+    repository: ndo-account
+    tag: "latest"
+    pullPolicy: IfNotPresent
+  service:
+    httpPort: 8000
+    grpcPort: 8123
+  env:
+    redisUrl: redis://redis:6379
+    mongoConnectionString: "mongodb://mongo:27017/account"
+    s3Endpoint: "http://minio:9000"
+    s3Region: "us-east-1"
+    s3Bucket: "miiverse"
+    s3AccessKey: "minioadmin"
+    s3AccessSecret: "minioadmin"
+    cdnBaseUrl: "http://minio:9000/miiverse"
+  hostnames:
+    - conntest.n.tasklab.dev
+    - cbvc.cdn.n.tasklab.dev
+    - c.account.n.tasklab.dev
+    - account.n.tasklab.dev
+    - nasc.n.tasklab.dev
+    - datastore.n.tasklab.dev
+    - api.n.tasklab.dev
+    - local-cdn.n.tasklab.dev
+    - assets.n.tasklab.dev
+
+# Friends Service Configuration
+friends:
+  enabled: true
+  replicaCount: 1
+  image:
+    repository: ndo-friends
+    tag: "latest"
+    pullPolicy: IfNotPresent
+  service:
+    type: NodePort
+    authPort: 62000
+    securePort: 63000
+    grpcPort: 8124
+  env:
+    postgresUri: "postgres://postgres:postgres@postgres:5432/friends?sslmode=disable"
+    postgresMaxConnections: 100
+
+# Miiverse API Service Configuration
+miiverseApi:
+  enabled: true
+  replicaCount: 1
+  image:
+    repository: ndo-miiverse-api
+    tag: "latest"
+    pullPolicy: IfNotPresent
+  service:
+    httpPort: 8080
+    grpcPort: 8125
+  env:
+    mongooseUri: "mongodb://mongo:27017/miiverse?directConnection=true"
+    s3Endpoint: "http://minio:9000"
+    s3Key: "minioadmin"
+    s3Secret: "minioadmin"
+    s3Bucket: "miiverse"
+    s3Region: "us-east-1"
+    cdnUrl: "http://minio:9000/miiverse"
+    domainsApi: "api.olv.n.tasklab.dev"
+    domainsDiscovery: "discovery.olv.n.tasklab.dev"
+  hostnames:
+    - discovery.olv.nintendo.net
+    - discovery.olv.n.tasklab.dev
+    - api.olv.n.tasklab.dev
+
+# Miiverse Web Service Configuration
+miiverseWeb:
+  enabled: true
+  replicaCount: 1
+  image:
+    repository: ndo-miiverse-web
+    tag: "latest"
+    pullPolicy: IfNotPresent
+  service:
+    httpPort: 5173
+  env:
+    redisHost: redis
+    redisPort: 6379
+    cdnDomain: "http://minio:9000/miiverse"
+    whitelist: ""
+    disableConsoleChecks: true
+    httpBaseUrl: "http://juxt.n.tasklab.dev"
+    domainsWeb: "juxt.n.tasklab.dev"
+    domainsCtr: "ctr.olv.n.tasklab.dev"
+    domainsPortal: "portal.olv.n.tasklab.dev"
+  hostnames:
+    - juxt.n.tasklab.dev
+    - portal.olv.n.tasklab.dev
+    - ctr.olv.n.tasklab.dev
+
+# Tri-Force Heroes Service Configuration
+triForceHeroes:
+  enabled: true
+  replicaCount: 1
+  image:
+    repository: tfh-server
+    tag: "latest"
+    pullPolicy: IfNotPresent
+  service:
+    type: NodePort
+    authPort: 60000
+    securePort: 61000
+  env:
+    postgresUri: "postgres://postgres:postgres@postgres:5432/triforce?sslmode=disable"
+
+# NNCS Service Configuration
+nncs:
+  enabled: true
+  replicaCount: 1
+  image:
+    repository: ndo-nncs
+    tag: "latest"
+    pullPolicy: IfNotPresent
+  service:
+    type: NodePort
+  env:
+    localIpAddress: ""
+
+# Service Account Configuration
+serviceAccount:
+  create: true
+  automount: true
+  annotations: {}
+  name: ""
+

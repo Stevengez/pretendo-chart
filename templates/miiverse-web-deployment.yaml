@@ -1,0 +1,68 @@
+{{- if .Values.miiverseWeb.enabled -}}
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: {{ include "taskndo.fullname" . }}-miiverse-web
+  labels:
+    {{- include "taskndo.labels" . | nindent 4 }}
+    app: {{ include "taskndo.fullname" . }}-miiverse-web
+spec:
+  replicas: {{ .Values.miiverseWeb.replicaCount }}
+  selector:
+    matchLabels:
+      app: {{ include "taskndo.fullname" . }}-miiverse-web
+  template:
+    metadata:
+      labels:
+        app: {{ include "taskndo.fullname" . }}-miiverse-web
+    spec:
+      {{- with .Values.global.imagePullSecrets }}
+      imagePullSecrets:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+      containers:
+        - name: miiverse-web
+          image: "{{ if .Values.global.imageRegistry }}{{ .Values.global.imageRegistry }}/{{ end }}{{ .Values.miiverseWeb.image.repository }}:{{ .Values.miiverseWeb.image.tag }}"
+          imagePullPolicy: {{ .Values.miiverseWeb.image.pullPolicy }}
+          env:
+            - name: PN_JUXTAPOSITION_UI_HTTP_PORT
+              value: {{ .Values.miiverseWeb.service.httpPort | quote }}
+            - name: PN_JUXTAPOSITION_UI_REDIS_HOST
+              value: {{ if .Values.redis.enabled }}"redis"{{ else }}{{ .Values.miiverseWeb.env.redisHost | quote }}{{ end }}
+            - name: PN_JUXTAPOSITION_UI_REDIS_PORT
+              value: {{ if .Values.redis.enabled }}{{ .Values.redis.service.port | quote }}{{ else }}{{ .Values.miiverseWeb.env.redisPort | quote }}{{ end }}
+            - name: PN_JUXTAPOSITION_UI_GRPC_ACCOUNT_HOST
+              value: {{ include "taskndo.fullname" . }}-account
+            - name: PN_JUXTAPOSITION_UI_GRPC_ACCOUNT_PORT
+              value: {{ .Values.account.service.grpcPort | quote }}
+            - name: PN_JUXTAPOSITION_UI_GRPC_ACCOUNT_API_KEY
+              value: {{ .Values.global.masterApiKey | quote }}
+            - name: PN_JUXTAPOSITION_UI_GRPC_MIIVERSE_HOST
+              value: {{ include "taskndo.fullname" . }}-miiverse-api
+            - name: PN_JUXTAPOSITION_UI_GRPC_MIIVERSE_PORT
+              value: {{ .Values.miiverseApi.service.grpcPort | quote }}
+            - name: PN_JUXTAPOSITION_UI_GRPC_MIIVERSE_API_KEY
+              value: {{ .Values.global.masterApiKey | quote }}
+            - name: PN_JUXTAPOSITION_UI_AES_KEY
+              value: {{ .Values.global.aesKey | quote }}
+            - name: PN_JUXTAPOSITION_UI_CDN_DOMAIN
+              value: {{ if .Values.minio.enabled }}"http://minio:{{ .Values.minio.service.port }}/{{ .Values.minio.env.bucket }}"{{ else }}{{ .Values.miiverseWeb.env.cdnDomain | quote }}{{ end }}
+            - name: PN_JUXTAPOSITION_UI_WHITELIST
+              value: {{ .Values.miiverseWeb.env.whitelist | quote }}
+            - name: PN_JUXTAPOSITION_UI_SERVER_ENVIRONMENT
+              value: {{ .Values.global.serverEnvironment | quote }}
+            - name: PN_JUXTAPOSITION_UI_DISABLE_CONSOLE_CHECKS
+              value: {{ .Values.miiverseWeb.env.disableConsoleChecks | quote }}
+            - name: PN_JUXTAPOSITION_UI_HTTP_BASE_URL
+              value: {{ .Values.miiverseWeb.env.httpBaseUrl | quote }}
+            - name: PN_JUXTAPOSITION_UI_DOMAINS_WEB
+              value: {{ .Values.miiverseWeb.env.domainsWeb | quote }}
+            - name: PN_JUXTAPOSITION_UI_DOMAINS_CTR
+              value: {{ .Values.miiverseWeb.env.domainsCtr | quote }}
+            - name: PN_JUXTAPOSITION_UI_DOMAINS_PORTAL
+              value: {{ .Values.miiverseWeb.env.domainsPortal | quote }}
+          ports:
+            - name: http
+              containerPort: {{ .Values.miiverseWeb.service.httpPort }}
+              protocol: TCP
+{{- end }}

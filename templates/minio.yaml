@@ -1,0 +1,91 @@
+{{- if .Values.minio.enabled -}}
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: minio
+  labels:
+    {{- include "taskndo.labels" . | nindent 4 }}
+    app: minio
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: minio
+  template:
+    metadata:
+      labels:
+        app: minio
+    spec:
+      containers:
+        - name: minio
+          image: "{{ .Values.minio.image.repository }}:{{ .Values.minio.image.tag }}"
+          imagePullPolicy: {{ .Values.minio.image.pullPolicy }}
+          command: ["minio", "server", "/data", "--console-address", ":9001"]
+          env:
+            - name: MINIO_ROOT_USER
+              value: {{ .Values.minio.env.rootUser | quote }}
+            - name: MINIO_ROOT_PASSWORD
+              value: {{ .Values.minio.env.rootPassword | quote }}
+            - name: MINIO_DOMAIN
+              value: {{ .Values.minio.env.domain | quote }}
+          ports:
+            - name: api
+              containerPort: 9000
+              protocol: TCP
+            - name: console
+              containerPort: 9001
+              protocol: TCP
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: minio
+  labels:
+    {{- include "taskndo.labels" . | nindent 4 }}
+spec:
+  ports:
+    - port: 9000
+      targetPort: api
+      protocol: TCP
+      name: api
+    - port: 9001
+      targetPort: console
+      protocol: TCP
+      name: console
+  selector:
+    app: minio
+---
+apiVersion: batch/v1
+kind: Job
+metadata:
+  name: {{ include "taskndo.fullname" . }}-minio-setup
+  labels:
+    {{- include "taskndo.labels" . | nindent 4 }}
+spec:
+  template:
+    spec:
+      restartPolicy: OnFailure
+      containers:
+        - name: mc
+          image: minio/mc
+          command:
+            - /bin/sh
+            - -c
+            - |
+              echo "Waiting for minio to start..."
+              until mc alias set local http://minio:9000 $MINIO_ROOT_USER $MINIO_ROOT_PASSWORD >/dev/null 2>&1; do
+                sleep 1
+              done
+              echo "Creating bucket..."
+              mc mb --ignore-existing local/$BUCKET
+              mc policy set public local/$BUCKET
+              mc anonymous set download local/$BUCKET
+              mc anonymous set public local/$BUCKET
+          env:
+            - name: MINIO_ROOT_USER
+              value: {{ .Values.minio.env.rootUser | quote }}
+            - name: MINIO_ROOT_PASSWORD
+              value: {{ .Values.minio.env.rootPassword | quote }}
+            - name: BUCKET
+              value: {{ .Values.minio.env.bucket | quote }}
+{{- end }}

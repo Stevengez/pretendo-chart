@@ -1,0 +1,73 @@
+{{- if .Values.account.enabled -}}
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: {{ include "taskndo.fullname" . }}-account
+  labels:
+    {{- include "taskndo.labels" . | nindent 4 }}
+    app: {{ include "taskndo.fullname" . }}-account
+spec:
+  replicas: {{ .Values.account.replicaCount }}
+  selector:
+    matchLabels:
+      app: {{ include "taskndo.fullname" . }}-account
+  template:
+    metadata:
+      labels:
+        app: {{ include "taskndo.fullname" . }}-account
+    spec:
+      {{- with .Values.global.imagePullSecrets }}
+      imagePullSecrets:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+      containers:
+        - name: account
+          image: "{{ if .Values.global.imageRegistry }}{{ .Values.global.imageRegistry }}/{{ end }}{{ .Values.account.image.repository }}:{{ .Values.account.image.tag }}"
+          imagePullPolicy: {{ .Values.account.image.pullPolicy }}
+          env:
+            - name: PN_ACT_PREFER_ENV_CONFIG
+              value: "true"
+            - name: PN_ACT_CONFIG_HTTP_PORT
+              value: {{ .Values.account.service.httpPort | quote }}
+            - name: PN_ACT_CONFIG_GRPC_PORT
+              value: {{ .Values.account.service.grpcPort | quote }}
+            - name: PN_ACT_CONFIG_SERVER_ENVIRONMENT
+              value: {{ .Values.global.serverEnvironment | quote }}
+            - name: PN_ACT_CONFIG_REDIS_URL
+              value: {{ if .Values.redis.enabled }}"redis://redis:{{ .Values.redis.service.port }}"{{ else }}{{ .Values.account.env.redisUrl | quote }}{{ end }}
+            - name: PN_ACT_CONFIG_MONGO_CONNECTION_STRING
+              value: {{ if .Values.mongo.enabled }}"mongodb://mongo:{{ .Values.mongo.service.port }}/account"{{ else }}{{ .Values.account.env.mongoConnectionString | quote }}{{ end }}
+            - name: PN_ACT_CONFIG_S3_FORCE_PATH_STYLE
+              value: "true"
+            - name: PN_ACT_CONFIG_S3_ENDPOINT
+              value: {{ if .Values.minio.enabled }}"http://minio:{{ .Values.minio.service.port }}"{{ else }}{{ .Values.account.env.s3Endpoint | quote }}{{ end }}
+            - name: PN_ACT_CONFIG_S3_REGION
+              value: {{ .Values.account.env.s3Region | quote }}
+            - name: PN_ACT_CONFIG_S3_BUCKET
+              value: {{ if .Values.minio.enabled }}{{ .Values.minio.env.bucket | quote }}{{ else }}{{ .Values.account.env.s3Bucket | quote }}{{ end }}
+            - name: PN_ACT_CONFIG_S3_ACCESS_KEY
+              value: {{ if .Values.minio.enabled }}{{ .Values.minio.env.rootUser | quote }}{{ else }}{{ .Values.account.env.s3AccessKey | quote }}{{ end }}
+            - name: PN_ACT_CONFIG_S3_ACCESS_SECRET
+              value: {{ if .Values.minio.enabled }}{{ .Values.minio.env.rootPassword | quote }}{{ else }}{{ .Values.account.env.s3AccessSecret | quote }}{{ end }}
+            - name: PN_ACT_CONFIG_CDN_BASE_URL
+              value: {{ if .Values.minio.enabled }}"http://minio:{{ .Values.minio.service.port }}/{{ .Values.minio.env.bucket }}"{{ else }}{{ .Values.account.env.cdnBaseUrl | quote }}{{ end }}
+            - name: PN_ACT_CONFIG_AES_KEY
+              value: {{ .Values.global.aesKey | quote }}
+            - name: PN_ACT_CONFIG_GRPC_MASTER_API_KEY_ACCOUNT
+              value: {{ .Values.global.masterApiKey | quote }}
+            - name: PN_ACT_CONFIG_GRPC_MASTER_API_KEY_API
+              value: {{ .Values.global.masterApiKey | quote }}
+            - name: PN_ACT_CONFIG_GRPC_MIIVERSE_HOST
+              value: {{ include "taskndo.fullname" . }}-miiverse-api
+            - name: PN_ACT_CONFIG_GRPC_MIIVERSE_PORT
+              value: {{ .Values.miiverseApi.service.grpcPort | quote }}
+            - name: PN_ACT_CONFIG_GRPC_MIIVERSE_KEY_API
+              value: {{ .Values.global.masterApiKey | quote }}
+          ports:
+            - name: http
+              containerPort: {{ .Values.account.service.httpPort }}
+              protocol: TCP
+            - name: grpc
+              containerPort: {{ .Values.account.service.grpcPort }}
+              protocol: TCP
+{{- end }}

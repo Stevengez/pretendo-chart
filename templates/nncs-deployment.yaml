@@ -1,0 +1,49 @@
+{{- if .Values.nncs.enabled -}}
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: {{ include "taskndo.fullname" . }}-nncs
+  labels:
+    {{- include "taskndo.labels" . | nindent 4 }}
+    app: {{ include "taskndo.fullname" . }}-nncs
+spec:
+  replicas: {{ .Values.nncs.replicaCount }}
+  selector:
+    matchLabels:
+      app: {{ include "taskndo.fullname" . }}-nncs
+  template:
+    metadata:
+      labels:
+        app: {{ include "taskndo.fullname" . }}-nncs
+    spec:
+      {{- with .Values.global.imagePullSecrets }}
+      imagePullSecrets:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+      containers:
+        - name: nncs
+          image: "{{ if .Values.global.imageRegistry }}{{ .Values.global.imageRegistry }}/{{ end }}{{ .Values.nncs.image.repository }}:{{ .Values.nncs.image.tag }}"
+          imagePullPolicy: {{ .Values.nncs.image.pullPolicy }}
+          env:
+            - name: PN_NNCS1_IP_ADDRESS
+              value: {{ .Values.nncs.env.nncs1IpAddress | default .Values.global.primaryServerIp | quote }}
+            - name: PN_NNCS2_IP_ADDRESS
+              value: {{ .Values.nncs.env.nncs2IpAddress | default .Values.global.secondaryServerIp | quote }}
+            {{- if .Values.nncs.env.localIpAddress }}
+            - name: PN_NNCS_LOCAL_IP_ADDRESS
+              value: {{ .Values.nncs.env.localIpAddress | quote }}
+            {{- end }}
+          ports:
+            - name: primary
+              containerPort: 10025
+              protocol: UDP
+            - name: secondary
+              containerPort: 10125
+              protocol: UDP
+            - name: unknown-33334
+              containerPort: 33334
+              protocol: UDP
+            - name: unknown-33335
+              containerPort: 33335
+              protocol: UDP
+{{- end }}

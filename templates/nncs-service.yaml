@@ -1,0 +1,29 @@
+{{- if .Values.nncs.enabled -}}
+apiVersion: v1
+kind: Service
+metadata:
+  name: {{ include "taskndo.fullname" . }}-nncs
+  labels:
+    {{- include "taskndo.labels" . | nindent 4 }}
+spec:
+  type: {{ .Values.nncs.service.type | default "NodePort" }}
+  ports:
+    - port: 10025
+      targetPort: primary
+      protocol: UDP
+      name: primary
+    - port: 10125
+      targetPort: secondary
+      protocol: UDP
+      name: secondary
+    - port: 33334
+      targetPort: unknown-33334
+      protocol: UDP
+      name: unknown-33334
+    - port: 33335
+      targetPort: unknown-33335
+      protocol: UDP
+      name: unknown-33335
+  selector:
+    app: {{ include "taskndo.fullname" . }}-nncs
+{{- end }}
