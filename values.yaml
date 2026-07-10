@@ -11,15 +11,16 @@ global:
   # Global server environment (prod, dev, etc.)
   serverEnvironment: "prod"
   # Global primary server IP (used for game servers bind/advertisement)
-  primaryServerIp: "192.168.31.11"
+  primaryServerIp: "160.34.215.75"
   # Global secondary server IP (used for secondary NAT checkers)
-  secondaryServerIp: "192.168.31.12"
+  secondaryServerIp: "163.192.159.130"
   # Optional global image pull secrets for private registries
-  imagePullSecrets: []
+  imagePullSecrets:
+    - tskregcred
   # Gateway API configuration for HTTPRoutes
   gateway:
     parentRefs:
-      - name: gateway
+      - name: taskcenter
         sectionName: http
 
 # ------------------------------------------------------------------------------
@@ -90,7 +91,7 @@ nginx:
     httpsPort: 443
   tls:
     # Name of the Kubernetes Secret containing the TLS certificate (tls.crt) and key (tls.key)
-    secretName: "taskndo-nginx-tls"
+    secretName: "tasklab-wildcard-tls"
 
 # ------------------------------------------------------------------------------
 # Application Services
@@ -200,7 +201,7 @@ triForceHeroes:
   enabled: true
   replicaCount: 1
   image:
-    repository: tfh-server
+    repository: ndo-tfh-server
     tag: "latest"
     pullPolicy: IfNotPresent
   service:
