@@ -1,0 +1,21 @@
+{{- if .Values.miiverseApi.enabled -}}
+apiVersion: gateway.networking.k8s.io/v1
+kind: HTTPRoute
+metadata:
+  name: miiverse-api
+  labels:
+    {{- include "taskndo.labels" . | nindent 4 }}
+spec:
+  parentRefs:
+    {{- toYaml .Values.global.gateway.parentRefs | nindent 4 }}
+  hostnames:
+    {{- toYaml .Values.miiverseApi.hostnames | nindent 4 }}
+  rules:
+    - matches:
+        - path:
+            type: PathPrefix
+            value: /
+      backendRefs:
+        - name: miiverse-api
+          port: {{ .Values.miiverseApi.service.httpPort }}
+{{- end }}

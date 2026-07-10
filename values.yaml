@@ -77,22 +77,6 @@ minio:
     domain: "minio"
     bucket: "miiverse"
 
-# Nginx Router Configuration (Handles SSL for older consoles with TLS v1/v1.1)
-nginx:
-  enabled: true
-  replicaCount: 1
-  image:
-    repository: nginx
-    tag: "alpine"
-    pullPolicy: IfNotPresent
-  service:
-    type: LoadBalancer
-    httpPort: 80
-    httpsPort: 443
-  tls:
-    # Name of the Kubernetes Secret containing the TLS certificate (tls.crt) and key (tls.key)
-    secretName: "tasklab-wildcard-tls"
-
 # ------------------------------------------------------------------------------
 # Application Services
 # ------------------------------------------------------------------------------

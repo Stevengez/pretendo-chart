@@ -7,10 +7,17 @@ The following services are configured:
 - Miiverse Web: miiverse-web (Port: {{ .Values.miiverseWeb.service.httpPort }})
 - Tri-Force Heroes: tri-force-heroes (Ports: auth: {{ .Values.triForceHeroes.service.authPort }})
 - NNCS NAT Check: nncs
-- Nginx Router: nginx (HTTP: {{ .Values.nginx.service.httpPort }}, HTTPS: {{ .Values.nginx.service.httpsPort }})
 
-HTTP and HTTPS routing is managed through the central Nginx Router service mapping the configured hosts:
-- Account domains: {{ join ", " .Values.account.hostnames }}
-- Miiverse API domains: {{ join ", " .Values.miiverseApi.hostnames }}
-- Miiverse Web domains: {{ join ", " .Values.miiverseWeb.hostnames }}
-- S3/CDN domains: cdn.n.tasklab.dev, r2-cdn.n.tasklab.dev
+HTTP routing is configured via Gateway API HTTPRoute resources matching your hostnames:
+- Account Service Hostnames:
+{{- range .Values.account.hostnames }}
+    - http://{{ . }}
+{{- end }}
+- Miiverse API Hostnames:
+{{- range .Values.miiverseApi.hostnames }}
+    - http://{{ . }}
+{{- end }}
+- Miiverse Web Hostnames:
+{{- range .Values.miiverseWeb.hostnames }}
+    - http://{{ . }}
+{{- end }}
