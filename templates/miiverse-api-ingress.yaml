@@ -1,0 +1,35 @@
+{{- if .Values.miiverseApi.enabled -}}
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: miiverse-api
+  labels:
+    {{- include "taskndo.labels" . | nindent 4 }}
+  annotations:
+    kubernetes.io/ingress.class: {{ .Values.global.ingress.className | quote }}
+    nginx.ingress.kubernetes.io/ssl-redirect: "true"
+    nginx.ingress.kubernetes.io/backend-protocol: "HTTP"
+    nginx.ingress.kubernetes.io/server-snippet: |
+      ssl_protocols TLSv1 TLSv1.1 TLSv1.2 TLSv1.3;
+      ssl_ciphers 'DEFAULT:@SECLEVEL=0';
+      ssl_prefer_server_ciphers on;
+spec:
+  ingressClassName: {{ .Values.global.ingress.className | quote }}
+  tls:
+    - hosts:
+        {{- toYaml .Values.miiverseApi.hostnames | nindent 8 }}
+      secretName: {{ .Values.global.ingress.tls.secretName | quote }}
+  rules:
+    {{- range .Values.miiverseApi.hostnames }}
+    - host: {{ . | quote }}
+      http:
+        paths:
+          - path: /
+            pathType: Prefix
+            backend:
+              service:
+                name: miiverse-api
+                port:
+                  number: {{ $.Values.miiverseApi.service.httpPort }}
+    {{- end }}
+{{- end }}

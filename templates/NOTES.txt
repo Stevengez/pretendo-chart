@@ -8,16 +8,16 @@ The following services are configured:
 - Tri-Force Heroes: tri-force-heroes (Ports: auth: {{ .Values.triForceHeroes.service.authPort }})
 - NNCS NAT Check: nncs
 
-HTTP routing is configured via Gateway API HTTPRoute resources matching your hostnames:
+HTTP/HTTPS routing is configured via Nginx Ingress resources matching your hostnames:
 - Account Service Hostnames:
 {{- range .Values.account.hostnames }}
-    - http://{{ . }}
+    - https://{{ . }}
 {{- end }}
 - Miiverse API Hostnames:
 {{- range .Values.miiverseApi.hostnames }}
-    - http://{{ . }}
+    - https://{{ . }}
 {{- end }}
 - Miiverse Web Hostnames:
 {{- range .Values.miiverseWeb.hostnames }}
-    - http://{{ . }}
+    - https://{{ . }}
 {{- end }}
