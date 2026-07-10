@@ -1,15 +1,22 @@
+{{- if .Values.mongo.enabled -}}
 apiVersion: batch/v1
 kind: Job
 metadata:
   name: mongo-setup
-  namespace: 3ds
+  labels:
+    {{- include "taskndo.labels" . | nindent 4 }}
 spec:
   template:
     spec:
       restartPolicy: OnFailure
+      {{- with .Values.global.imagePullSecrets }}
+      imagePullSecrets:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
       containers:
         - name: mongo-init
-          image: mongo:8.0
+          image: "{{ .Values.mongo.image.repository }}:{{ .Values.mongo.image.tag }}"
+          imagePullPolicy: {{ .Values.mongo.image.pullPolicy }}
           command:
             - /bin/sh
             - -c
@@ -53,7 +60,7 @@ spec:
                     access_mode: 'prod',
                     maintenance_mode: false,
                     device: 1,
-                    aes_key: '1234567812345678123456781234567812345678123456781234567812345678',
+                    aes_key: '{{ .Values.global.aesKey }}',
                     client_id: '87cd32617f1985439ea608c2746e4610'
                   });
                 } else {
@@ -78,3 +85,4 @@ spec:
                 }
               " --quiet
               echo "Database seeding finished successfully."
+{{- end }}
