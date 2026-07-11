@@ -115,7 +115,7 @@ account:
     domainsConntest: "conntest.n.tasklab.dev"
     domainsDatastore: "datastore.n.tasklab.dev"
     domainsLocalCdn: ""
-    domainsNasc: "nasc.n.tasklab.dev"
+    domainsNasc: "nasc.n.tasklab.dev,nasc.dev.n.tasklab.dev"
     domainsNnas: "c.account.n.tasklab.dev,account.n.tasklab.dev"
   hostnames:
     - conntest.n.tasklab.dev
