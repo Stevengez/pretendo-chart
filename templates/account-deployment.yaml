@@ -68,6 +68,8 @@ spec:
               value: {{ .Values.account.env.emailPass | quote }}
             - name: PN_ACT_CONFIG_EMAIL_FROM
               value: {{ .Values.account.env.emailFrom | quote }}
+            - name: PN_ACT_CONFIG_WEBSITE_BASE
+              value: {{ .Values.account.env.websiteBase | quote }}
             - name: PN_ACT_CONFIG_AES_KEY
               value: {{ .Values.global.aesKey | quote }}
             - name: PN_ACT_CONFIG_GRPC_MASTER_API_KEY_ACCOUNT

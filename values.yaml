@@ -108,6 +108,7 @@ account:
     emailUser: "noreply-s7endo@tasklab.dev"
     emailPass: "S7endo@2026"
     emailFrom: "S7endo Support <noreply-s7endo@tasklab.dev>"
+    websiteBase: "https://n.tasklab.dev"
     domainsApi: "api.n.tasklab.dev"
     domainsAssets: "assets.n.tasklab.dev"
     domainsCbvc: "cbvc.cdn.n.tasklab.dev"
