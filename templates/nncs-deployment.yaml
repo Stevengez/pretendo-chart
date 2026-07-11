@@ -17,6 +17,7 @@ spec:
         app: nncs
     spec:
       hostNetwork: true
+      dnsPolicy: ClusterFirstWithHostNet
       {{- with .Values.global.imagePullSecrets }}
       imagePullSecrets:
         {{- toYaml . | nindent 8 }}
