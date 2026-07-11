@@ -22,7 +22,7 @@ global:
     enabled: true
     className: "nginx"
     tls:
-      secretName: "tasklab-wildcard-tls"
+      secretName: "ndo-wildcard-tls"
 
 # ------------------------------------------------------------------------------
 # Dependencies
