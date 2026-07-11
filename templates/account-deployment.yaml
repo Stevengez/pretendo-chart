@@ -56,6 +56,18 @@ spec:
               value: {{ if .Values.minio.enabled }}{{ .Values.minio.env.rootPassword | quote }}{{ else }}{{ .Values.account.env.s3AccessSecret | quote }}{{ end }}
             - name: PN_ACT_CONFIG_CDN_BASE_URL
               value: {{ if .Values.minio.enabled }}"http://minio:{{ .Values.minio.service.port }}/{{ .Values.minio.env.bucket }}"{{ else }}{{ .Values.account.env.cdnBaseUrl | quote }}{{ end }}
+            - name: PN_ACT_CONFIG_EMAIL_HOST
+              value: {{ .Values.account.env.emailHost | quote }}
+            - name: PN_ACT_CONFIG_EMAIL_PORT
+              value: {{ .Values.account.env.emailPort | quote }}
+            - name: PN_ACT_CONFIG_EMAIL_SECURE
+              value: {{ .Values.account.env.emailSecure | quote }}
+            - name: PN_ACT_CONFIG_EMAIL_USER
+              value: {{ .Values.account.env.emailUser | quote }}
+            - name: PN_ACT_CONFIG_EMAIL_PASS
+              value: {{ .Values.account.env.emailPass | quote }}
+            - name: PN_ACT_CONFIG_EMAIL_FROM
+              value: {{ .Values.account.env.emailFrom | quote }}
             - name: PN_ACT_CONFIG_AES_KEY
               value: {{ .Values.global.aesKey | quote }}
             - name: PN_ACT_CONFIG_GRPC_MASTER_API_KEY_ACCOUNT
