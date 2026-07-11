@@ -123,6 +123,7 @@ account:
     - c.account.n.tasklab.dev
     - account.n.tasklab.dev
     - nasc.n.tasklab.dev
+    - nasc.dev.n.tasklab.dev
     - datastore.n.tasklab.dev
     - api.n.tasklab.dev
     - local-cdn.n.tasklab.dev
