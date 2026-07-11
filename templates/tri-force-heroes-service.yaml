@@ -12,18 +12,22 @@ spec:
       targetPort: auth-tcp
       protocol: TCP
       name: auth-tcp
+      nodePort: {{ .Values.triForceHeroes.service.authPort }}
     - port: {{ .Values.triForceHeroes.service.authPort }}
       targetPort: auth-udp
       protocol: UDP
       name: auth-udp
+      nodePort: {{ .Values.triForceHeroes.service.authPort }}
     - port: {{ .Values.triForceHeroes.service.securePort }}
       targetPort: secure-tcp
       protocol: TCP
       name: secure-tcp
+      nodePort: {{ .Values.triForceHeroes.service.securePort }}
     - port: {{ .Values.triForceHeroes.service.securePort }}
       targetPort: secure-udp
       protocol: UDP
       name: secure-udp
+      nodePort: {{ .Values.triForceHeroes.service.securePort }}
   selector:
     app: tri-force-heroes
 {{- end }}

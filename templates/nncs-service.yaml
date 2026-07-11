@@ -12,18 +12,22 @@ spec:
       targetPort: primary
       protocol: UDP
       name: primary
+      nodePort: 10025
     - port: 10125
       targetPort: secondary
       protocol: UDP
       name: secondary
+      nodePort: 10125
     - port: 33334
       targetPort: unknown-33334
       protocol: UDP
       name: unknown-33334
+      nodePort: 33334
     - port: 33335
       targetPort: unknown-33335
       protocol: UDP
       name: unknown-33335
+      nodePort: 33335
   selector:
     app: nncs
 {{- end }}
