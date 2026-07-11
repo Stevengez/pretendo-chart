@@ -102,6 +102,14 @@ account:
     s3AccessKey: "minioadmin"
     s3AccessSecret: "minioadmin"
     cdnBaseUrl: "http://minio:9000/miiverse"
+    domainsApi: "api.n.tasklab.dev"
+    domainsAssets: "assets.n.tasklab.dev"
+    domainsCbvc: "cbvc.cdn.n.tasklab.dev"
+    domainsConntest: "conntest.n.tasklab.dev"
+    domainsDatastore: "datastore.n.tasklab.dev"
+    domainsLocalCdn: ""
+    domainsNasc: "nasc.n.tasklab.dev"
+    domainsNnas: "c.account.n.tasklab.dev,account.n.tasklab.dev"
   hostnames:
     - conntest.n.tasklab.dev
     - cbvc.cdn.n.tasklab.dev

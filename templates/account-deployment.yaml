@@ -63,6 +63,22 @@ spec:
               value: {{ .Values.miiverseApi.service.grpcPort | quote }}
             - name: PN_ACT_CONFIG_GRPC_MIIVERSE_KEY_API
               value: {{ .Values.global.masterApiKey | quote }}
+            - name: PN_ACT_CONFIG_DOMAINS_API
+              value: {{ .Values.account.env.domainsApi | quote }}
+            - name: PN_ACT_CONFIG_DOMAINS_ASSETS
+              value: {{ .Values.account.env.domainsAssets | quote }}
+            - name: PN_ACT_CONFIG_DOMAINS_CBVC
+              value: {{ .Values.account.env.domainsCbvc | quote }}
+            - name: PN_ACT_CONFIG_DOMAINS_CONNTEST
+              value: {{ .Values.account.env.domainsConntest | quote }}
+            - name: PN_ACT_CONFIG_DOMAINS_DATASTORE
+              value: {{ .Values.account.env.domainsDatastore | quote }}
+            - name: PN_ACT_CONFIG_DOMAINS_LOCAL_CDN
+              value: {{ .Values.account.env.domainsLocalCdn | quote }}
+            - name: PN_ACT_CONFIG_DOMAINS_NASC
+              value: {{ .Values.account.env.domainsNasc | quote }}
+            - name: PN_ACT_CONFIG_DOMAINS_NNAS
+              value: {{ .Values.account.env.domainsNnas | quote }}
           ports:
             - name: http
               containerPort: {{ .Values.account.service.httpPort }}
