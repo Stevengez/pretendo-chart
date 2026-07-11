@@ -34,7 +34,7 @@ mongo:
   image:
     repository: mongo
     tag: "8.0"
-    pullPolicy: IfNotPresent
+    pullPolicy: Always
   service:
     port: 27017
 
@@ -44,7 +44,7 @@ redis:
   image:
     repository: redis
     tag: "8.2-alpine"
-    pullPolicy: IfNotPresent
+    pullPolicy: Always
   service:
     port: 6379
 
@@ -54,7 +54,7 @@ postgres:
   image:
     repository: postgres
     tag: "latest"
-    pullPolicy: IfNotPresent
+    pullPolicy: Always
   service:
     port: 5432
   env:
@@ -68,7 +68,7 @@ minio:
   image:
     repository: minio/minio
     tag: "latest"
-    pullPolicy: IfNotPresent
+    pullPolicy: Always
   service:
     port: 9000
     consolePort: 9001
@@ -89,7 +89,7 @@ account:
   image:
     repository: ndo-account
     tag: "latest"
-    pullPolicy: IfNotPresent
+    pullPolicy: Always
   service:
     httpPort: 8000
     grpcPort: 8123
@@ -120,7 +120,7 @@ friends:
   image:
     repository: ndo-friends
     tag: "latest"
-    pullPolicy: IfNotPresent
+    pullPolicy: Always
   service:
     type: NodePort
     authPort: 62000
@@ -137,7 +137,7 @@ miiverseApi:
   image:
     repository: ndo-miiverse-api
     tag: "latest"
-    pullPolicy: IfNotPresent
+    pullPolicy: Always
   service:
     httpPort: 8080
     grpcPort: 8125
@@ -163,7 +163,7 @@ miiverseWeb:
   image:
     repository: ndo-miiverse-web
     tag: "latest"
-    pullPolicy: IfNotPresent
+    pullPolicy: Always
   service:
     httpPort: 5173
   env:
@@ -188,7 +188,7 @@ triForceHeroes:
   image:
     repository: ndo-tfh-server
     tag: "latest"
-    pullPolicy: IfNotPresent
+    pullPolicy: Always
   service:
     type: NodePort
     authPort: 60000
@@ -203,7 +203,7 @@ nncs:
   image:
     repository: ndo-nncs
     tag: "latest"
-    pullPolicy: IfNotPresent
+    pullPolicy: Always
   service:
     type: NodePort
     ip1: "10.0.0.169"

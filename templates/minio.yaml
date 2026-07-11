@@ -68,6 +68,7 @@ spec:
       containers:
         - name: mc
           image: minio/mc
+          imagePullPolicy: Always
           command:
             - /bin/sh
             - -c
