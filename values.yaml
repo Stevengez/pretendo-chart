@@ -122,7 +122,7 @@ friends:
     tag: "latest"
     pullPolicy: Always
   service:
-    type: NodePort
+    type: ClusterIP
     authPort: 62000
     securePort: 63000
     grpcPort: 8124
@@ -190,7 +190,7 @@ triForceHeroes:
     tag: "latest"
     pullPolicy: Always
   service:
-    type: NodePort
+    type: ClusterIP
     authPort: 60000
     securePort: 61000
   env:
@@ -205,7 +205,7 @@ nncs:
     tag: "latest"
     pullPolicy: Always
   service:
-    type: NodePort
+    type: ClusterIP
     ip1: "10.0.0.169"
     ip2: "10.0.0.69"
   env:

@@ -16,6 +16,7 @@ spec:
       labels:
         app: friends
     spec:
+      hostNetwork: true
       {{- with .Values.global.imagePullSecrets }}
       imagePullSecrets:
         {{- toYaml . | nindent 8 }}

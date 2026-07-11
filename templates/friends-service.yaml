@@ -6,33 +6,28 @@ metadata:
   labels:
     {{- include "taskndo.labels" . | nindent 4 }}
 spec:
-  type: {{ .Values.friends.service.type | default "NodePort" }}
+  type: {{ .Values.friends.service.type | default "ClusterIP" }}
   ports:
     - port: {{ .Values.friends.service.authPort }}
       targetPort: auth-tcp
       protocol: TCP
       name: auth-tcp
-      nodePort: {{ .Values.friends.service.authPort }}
     - port: {{ .Values.friends.service.authPort }}
       targetPort: auth-udp
       protocol: UDP
       name: auth-udp
-      nodePort: {{ .Values.friends.service.authPort }}
     - port: {{ .Values.friends.service.securePort }}
       targetPort: secure-tcp
       protocol: TCP
       name: secure-tcp
-      nodePort: {{ .Values.friends.service.securePort }}
     - port: {{ .Values.friends.service.securePort }}
       targetPort: secure-udp
       protocol: UDP
       name: secure-udp
-      nodePort: {{ .Values.friends.service.securePort }}
     - port: {{ .Values.friends.service.grpcPort }}
       targetPort: grpc
       protocol: TCP
       name: grpc
-      nodePort: {{ .Values.friends.service.grpcPort }}
   selector:
     app: friends
 {{- end }}
