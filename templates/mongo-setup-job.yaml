@@ -1,4 +1,4 @@
-{{- if .Values.mongo.enabled -}}
+{{- if and .Values.mongo.enabled (not .Release.IsUpgrade) (not (lookup "v1" "Service" .Release.Namespace "mongo")) -}}
 apiVersion: batch/v1
 kind: Job
 metadata:

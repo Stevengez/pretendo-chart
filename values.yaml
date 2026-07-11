@@ -170,7 +170,7 @@ miiverseWeb:
     redisHost: redis
     redisPort: 6379
     cdnDomain: "http://minio:9000/miiverse"
-    whitelist: ""
+    whitelist: " "
     disableConsoleChecks: true
     httpBaseUrl: "http://juxt.n.tasklab.dev"
     domainsWeb: "juxt.n.tasklab.dev"

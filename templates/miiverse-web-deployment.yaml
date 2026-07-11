@@ -31,6 +31,28 @@ spec:
               value: {{ if .Values.redis.enabled }}"redis"{{ else }}{{ .Values.miiverseWeb.env.redisHost | quote }}{{ end }}
             - name: PN_JUXTAPOSITION_UI_REDIS_PORT
               value: {{ if .Values.redis.enabled }}{{ .Values.redis.service.port | quote }}{{ else }}{{ .Values.miiverseWeb.env.redisPort | quote }}{{ end }}
+            
+            - name: PN_JUXTAPOSITION_UI_MONGOOSE_URI
+              value: {{ if .Values.mongo.enabled }}"mongodb://mongo:{{ .Values.mongo.service.port }}/miiverse?directConnection=true"{{ else }}{{ .Values.miiverseApi.env.mongooseUri | quote }}{{ end }}
+
+            - name: PN_JUXTAPOSITION_UI_S3_ENDPOINT
+              value: {{ if .Values.minio.enabled }}"http://minio:{{ .Values.minio.service.port }}"{{ else }}{{ .Values.miiverseApi.env.s3Endpoint | quote }}{{ end }}
+            - name: PN_JUXTAPOSITION_UI_S3_KEY
+              value: {{ if .Values.minio.enabled }}{{ .Values.minio.env.rootUser | quote }}{{ else }}{{ .Values.miiverseApi.env.s3Key | quote }}{{ end }}
+            - name: PN_JUXTAPOSITION_UI_S3_SECRET
+              value: {{ if .Values.minio.enabled }}{{ .Values.minio.env.rootPassword | quote }}{{ else }}{{ .Values.miiverseApi.env.s3Secret | quote }}{{ end }}
+            - name: PN_JUXTAPOSITION_UI_S3_BUCKET
+              value: {{ if .Values.minio.enabled }}{{ .Values.minio.env.bucket | quote }}{{ else }}{{ .Values.miiverseApi.env.s3Bucket | quote }}{{ end }}
+            - name: PN_JUXTAPOSITION_UI_S3_REGION
+              value: {{ .Values.miiverseApi.env.s3Region | quote }}
+
+            - name: PN_JUXTAPOSITION_UI_GRPC_FRIENDS_HOST
+              value: friends
+            - name: PN_JUXTAPOSITION_UI_GRPC_FRIENDS_PORT
+              value: {{ .Values.friends.service.grpcPort | quote }}
+            - name: PN_JUXTAPOSITION_UI_GRPC_FRIENDS_API_KEY
+              value: {{ .Values.global.masterApiKey | quote }}
+
             - name: PN_JUXTAPOSITION_UI_GRPC_ACCOUNT_HOST
               value: account
             - name: PN_JUXTAPOSITION_UI_GRPC_ACCOUNT_PORT

@@ -66,6 +66,7 @@ spec:
       name: console
   selector:
     app: minio
+{{- if and (not .Release.IsUpgrade) (not (lookup "v1" "Service" .Release.Namespace "minio")) }}
 ---
 apiVersion: batch/v1
 kind: Job
@@ -101,4 +102,5 @@ spec:
               value: {{ .Values.minio.env.rootPassword | quote }}
             - name: BUCKET
               value: {{ .Values.minio.env.bucket | quote }}
+{{- end }}
 {{- end }}
