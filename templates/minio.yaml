@@ -1,12 +1,13 @@
 {{- if .Values.minio.enabled -}}
 apiVersion: apps/v1
-kind: Deployment
+kind: StatefulSet
 metadata:
   name: minio
   labels:
     {{- include "taskndo.labels" . | nindent 4 }}
     app: minio
 spec:
+  serviceName: minio
   replicas: 1
   selector:
     matchLabels:
@@ -35,6 +36,17 @@ spec:
             - name: console
               containerPort: 9001
               protocol: TCP
+          volumeMounts:
+            - name: minio-data
+              mountPath: /data
+  volumeClaimTemplates:
+    - metadata:
+        name: minio-data
+      spec:
+        accessModes: [ "ReadWriteOnce" ]
+        resources:
+          requests:
+            storage: 5Gi
 ---
 apiVersion: v1
 kind: Service
