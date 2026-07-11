@@ -104,7 +104,7 @@ account:
     cdnBaseUrl: "http://minio:9000/miiverse"
     emailHost: "mail.tasklab.dev"
     emailPort: 465
-    emailSecure: false
+    emailSecure: true
     emailUser: "noreply-s7endo@tasklab.dev"
     emailPass: "S7endo@2026"
     emailFrom: "S7endo Support <noreply-s7endo@tasklab.dev>"
